@@ -12,6 +12,7 @@ void right(int);
 void sharpturn();
 void stopmotor();
 void leds();
+void pid();
 
 
 int P, D, I=0, previousError=0, PIDvalue, error;
@@ -53,29 +54,73 @@ void loop()
 
   while (1)
   {
+    //If Left Found
     if ((analogRead(5) + analogRead(4)) < (threshold[5] + threshold[4]) && (analogRead(0) + analogRead(1)) > (threshold[0] + threshold[1] ))
     {
       lsp = 0;
       rsp = lfspeed;
       left(rsp);
     }
-
+    //If Right Found
     else if ((analogRead(5) + analogRead(4)) > (threshold[5] + threshold[4]) && (analogRead(0) + analogRead(1)) < (threshold[0] + threshold[1] ))
     { 
-      lsp = lfspeed;
-      rsp = 0;
-     right(lsp);
+      //To check left is present or not
+      for(int i=0;i<100;i++)
+      {
+        if((analogRead(5) + analogRead(4)) < (threshold[5] + threshold[4]))
+        {
+          lsp = 0;
+          rsp = lfspeed;
+          left(rsp);
+          break;
+        }
+      }
+      //If straight is found
+      if((analogRead(2) + analogRead(3)) < (threshold[2] + threshold[3] ))
+      {
+        pid();
+      }
+      else
+      {
+        lsp = lfspeed;
+        rsp = 0;
+        right(lsp);
+      }
+
+    }
+    //If No line Found
+    else if(analogRead(5)>threshold[5]&&analogRead(4)>threshold[4]&&analogRead(3)>threshold[3]&&analogRead(2)>threshold[2]&&analogRead(1)>threshold[1]&&analogRead(0)>threshold[0])
+    {
+      sharpturn();
+    }
+    //if T section is found
+    else if(analogRead(5)<threshold[5]&&analogRead(4)<threshold[4]&&analogRead(3)<threshold[3]&&analogRead(2)<threshold[2]&&analogRead(1)<threshold[1]&&analogRead(0)<threshold[0])
+    {
+      if(analogRead(5)<threshold[5]&&analogRead(4)<threshold[4]&&analogRead(3)<threshold[3]&&analogRead(2)<threshold[2]&&analogRead(1)<threshold[1]&&analogRead(0)<threshold[0])
+      {
+        stopmotor();  //end maze
+      }
+      else
+      {
+        lsp = 0;
+        rsp = lfspeed;
+        left(rsp);
+      }
+      
     }
     else if ((analogRead(2) + analogRead(3)) < (threshold[2] + threshold[3] ))
     {
+      pid();
+    }
+  }
+}
+void pid()
+{
       Kp = 0.00055* ( 0-(analogRead(2)+analogRead(3))/2);
       Kd = 10 * Kp;
       //Ki = 0.0001;
       linefollow();
-    }
-  }
 }
-
 void linefollow()
 {
   int error = (analogRead(4) - analogRead(1));
