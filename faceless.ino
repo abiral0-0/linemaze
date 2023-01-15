@@ -59,7 +59,10 @@ void loop()
     {
       lsp = 0;
       rsp = lfspeed;
-      left(rsp);
+      do{
+        left(rsp);
+      }while(analogRead(3) > threshold[3] ||  analogRead(4) > threshold[4]);
+      
     }
     //If Right Found
     else if ((analogRead(5) + analogRead(4)) > (threshold[5] + threshold[4]) && (analogRead(0) + analogRead(1)) < (threshold[0] + threshold[1] ))
@@ -71,7 +74,9 @@ void loop()
         {
           lsp = 0;
           rsp = lfspeed;
-          left(rsp);
+          do{
+              left(rsp);
+             }while(analogRead(3) > threshold[3] ||  analogRead(4) > threshold[4]);
           break;
         }
       }
@@ -84,14 +89,19 @@ void loop()
       {
         lsp = lfspeed;
         rsp = 0;
-        right(lsp);
+        do{
+          right(lsp);
+        }while(analogRead(3) > threshold[3] ||  analogRead(4) > threshold[4]);
+        
       }
 
     }
     //If No line Found
     else if(analogRead(5)>threshold[5]&&analogRead(4)>threshold[4]&&analogRead(3)>threshold[3]&&analogRead(2)>threshold[2]&&analogRead(1)>threshold[1]&&analogRead(0)>threshold[0])
     {
-      sharpturn();
+      do{
+          sharpturn();
+        }while(analogRead(3) > threshold[3] ||  analogRead(4) > threshold[4]);
     }
     //if T section is found
     else if(analogRead(5)<threshold[5]&&analogRead(4)<threshold[4]&&analogRead(3)<threshold[3]&&analogRead(2)<threshold[2]&&analogRead(1)<threshold[1]&&analogRead(0)<threshold[0])
@@ -103,8 +113,10 @@ void loop()
       else
       {
         lsp = 0;
-        rsp = lfspeed;
+      rsp = lfspeed;
+      do{
         left(rsp);
+      }while(analogRead(3) > threshold[3] ||  analogRead(4) > threshold[4]);
       }
       
     }
